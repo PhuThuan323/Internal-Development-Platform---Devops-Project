@@ -1,0 +1,66 @@
+name: CI - Build & Push Service
+
+on:
+  workflow_call:
+    inputs:
+      service_name:
+        required: true
+        type: string
+      service_path:
+        required: true
+        type: string
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository_owner }}/${{ inputs.service_name }}
+  
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Log in to GHCR                    # Máy chủ ảo cần đăng nhập để có quyền đẩy image lên Github Registry 
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}         # Tự điền tên tài khoản của người dùng 
+          password: ${{ secrets.GITHUB_TOKEN }} # Github tự sinh ra và hủy khi dùng xong
+
+      - name: Extract metadata                  #Gán mác, đặt tag cho image sắp được build ra để dễ quản lý
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=sha,prefix=,format=short
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+
+      - name: Build and push                    #Đóng gói mã nguồn thành một image hoàn chỉnh
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{ inputs.service_path }}
+          push: true                            #Sau khi build xong thì push lên registry với tag đã được chuẩn bị ở bước metadata
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha                  #Bật tính năng ghi nhớ, nếu ko thay đổi code nhiều thì lôi code cũ ra build tiếp cho tiết kiệm tg
+          cache-to: type=gha,mode=max
+
+      - name: Update Helm values (GitOps)
+        if: github.ref == 'refs/heads/main' 
+        run: |
+          SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
+          
+          # Cập nhật image tag trong values file của service
+          sed -i "s|tag:.*|tag: ${SHORT_SHA}|g" apps/${{ inputs.service_name }}/values.yaml
+          
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add apps/${{ inputs.service_name }}/values.yaml
+          git diff --staged --quiet || git commit -m "chore(gitops): update ${{ inputs.service_name }} image to ${SHORT_SHA}"
+          git push
