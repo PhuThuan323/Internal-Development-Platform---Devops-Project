@@ -1,0 +1,31 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: boutique-monitor
+  namespace: monitoring
+  labels:
+    release: monitoring   # Match với bộ Prometheus Helm bạn đã cài
+spec:
+  namespaceSelector:
+    matchNames:
+      - boutique          # Namespace nơi các microservices đang chạy
+  selector:
+    matchExpressions:     # Sử dụng Expression để quét nhiều app cùng lúc
+      - key: app
+        operator: In
+        values:
+          - frontend
+          - adservice
+          - cartservice
+          - shoppingassistantservice
+          - checkoutservice
+          - currencyservice
+          - emailservice
+          - paymentservice
+          - loadgeneratorservice
+          - productcatalogservice
+          - shippingservice 
+  endpoints:
+    - port: http
+      interval: 15s      
+      path: /metrics       
