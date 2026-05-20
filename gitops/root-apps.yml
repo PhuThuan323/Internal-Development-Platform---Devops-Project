@@ -1,0 +1,19 @@
+# gitops/root-app.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: root-app
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/PhuThuan323/Internal-Development-Platform---Devops-Project.git
+    targetRevision: main
+    path: gitops/apps       # Thư mục chứa các Application con
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

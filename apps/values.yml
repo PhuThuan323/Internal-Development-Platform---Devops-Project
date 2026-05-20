@@ -10,6 +10,9 @@ frontend:
     limits:
       cpu: 200m
       memory: 128Mi
+  image:
+    repository: ghcr.io/PhuThuan323/frontendservice
+    tag: latest
 
 cartservice:
   resources:
@@ -19,6 +22,9 @@ cartservice:
     limits:
       cpu: 200m
       memory: 128Mi
+  image:
+    repository: ghcr.io/PhuThuan323/cartservice
+    tag: latest
 
 checkoutservice:
   resources:
@@ -28,6 +34,9 @@ checkoutservice:
     limits:
       cpu: 200m
       memory: 128Mi
+  image:
+    repository: ghcr.io/PhuThuan323/checkoutservice
+    tag: latest
 
 currencyservice:
   resources:
@@ -37,6 +46,9 @@ currencyservice:
     limits:
       cpu: 200m
       memory: 128Mi
+  image:
+    repository: ghcr.io/PhuThuan323/currencyservice
+    tag: latest
 
 emailservice:
   resources:
@@ -46,6 +58,9 @@ emailservice:
     limits:
       cpu: 200m
       memory: 128Mi
+  image:
+    repository: ghcr.io/PhuThuan323/emailservice
+    tag: latest
 
 loadgeneratorservice:
   resources:
@@ -55,6 +70,9 @@ loadgeneratorservice:
     limits:
       cpu: 200m
       memory: 128Mi
+  image:
+    repository: ghcr.io/PhuThuan323/loadgeneratorservice
+    tag: latest
 
 paymentservice:
   resources:
@@ -64,6 +82,9 @@ paymentservice:
     limits:
       cpu: 200m
       memory: 128Mi
+  image:
+    repository: ghcr.io/PhuThuan323/paymentservice
+    tag: latest
 
 productcatalogservice:
   resources:
@@ -73,6 +94,9 @@ productcatalogservice:
     limits:
       cpu: 200m
       memory: 128Mi
+  image:
+    repository: ghcr.io/PhuThuan323/productcatalogservice
+    tag: latest
 
 recommendationservice:
   resources:
@@ -82,6 +106,9 @@ recommendationservice:
     limits:
       cpu: 200m
       memory: 128Mi
+  image:
+    repository: ghcr.io/PhuThuan323/recommendationservice
+    tag: latest
 
 shippingservice:
   resources:
@@ -91,6 +118,9 @@ shippingservice:
     limits:
       cpu: 200m
       memory: 128Mi
+  image:
+    repository: ghcr.io/PhuThuan323/shippingservice
+    tag: latest
 
 shoppingassistantservice:
   resources:
@@ -100,3 +130,6 @@ shoppingassistantservice:
     limits:
       cpu: 200m
       memory: 128Mi
+  image:
+    repository: ghcr.io/PhuThuan323/shoppingassistantservice
+    tag: latest
